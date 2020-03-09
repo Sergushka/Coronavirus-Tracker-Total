@@ -1,5 +1,5 @@
 # Coronavirus-Tracker-Total
 
-See actual coronavirus information on https://obscure-scrubland-75861.herokuapp.com/
+See actual coronavirus information on https://corona-countries-tracker.herokuapp.com/
 
 Inspired by JavaBrains

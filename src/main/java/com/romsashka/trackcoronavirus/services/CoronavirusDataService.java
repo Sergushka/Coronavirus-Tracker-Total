@@ -88,7 +88,14 @@ public class CoronavirusDataService {
             return getLocationsDataSortedByTotalCases();
         }
 
+        for (String key : dataSourceLocationData.keySet()) {
+            if (key.toLowerCase().contains(country.toLowerCase())) {
+                country = key;
+            }
+        }
+
         LocationData countryData = dataSourceLocationData.get(country);
+
         if (countryData != null) {
             return Collections.singletonList(countryData);
         } else {

@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 
+import static org.springframework.util.StringUtils.capitalize;
+
 @Service
 public class CoronavirusDataService {
     private static final String CONFIRMED_VIRUS_CASES_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv";
+    private static final String ALL_CASE = "all";
     private LocationDataSource dataSource;
 
     @PostConstruct
@@ -74,5 +78,21 @@ public class CoronavirusDataService {
         List<LocationData> locationsData = new ArrayList<>(dataSourceLocationData.values());
         locationsData.sort(Comparator.comparingLong(LocationData::getTotalCases).reversed());
         return locationsData;
+    }
+
+    public List<LocationData> getLocationDataSortedByCountry(String country) throws NotFound {
+        Map<String, LocationData> dataSourceLocationData = dataSource.getLocationData();
+        country = capitalize(country);
+
+        if (ALL_CASE.equalsIgnoreCase(country)) {
+            return getLocationsDataSortedByTotalCases();
+        }
+
+        LocationData countryData = dataSourceLocationData.get(country);
+        if (countryData != null) {
+            return Collections.singletonList(countryData);
+        } else {
+            throw new NotFound();
+        }
     }
 }
